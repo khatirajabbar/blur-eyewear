@@ -14,9 +14,10 @@ import {
 } from "framer-motion";
 import { products, type Product } from "@/data/products";
 import { formatCurrency } from "@/lib/currency";
-import { BlurMark } from "@/components/brand/blur-mark";
+import { BlurLogo } from "@/components/brand/blur-mark";
 import { ProductVisual } from "@/components/product/product-visual";
 import { Grain } from "@/components/ui/grain";
+import { PixelField } from "@/components/ui/pixel-field";
 import { useBlurStore } from "@/store/blur-store";
 
 type Placement = {
@@ -85,6 +86,7 @@ function FloatingProduct({
   const { currency } = useBlurStore();
   const reduceMotion = useReducedMotion();
   const isActive = active?.id === product.id;
+  const depth = placement.scale >= 0.94 ? "near" : placement.scale <= 0.72 ? "far" : "mid";
   const parallaxY = useSpring(useTransform(scrollY, [0, 5800], [0, placement.parallaxY]), { stiffness: 42, damping: 28, mass: 0.4 });
   const parallaxX = useSpring(useTransform(scrollY, [0, 5800], [0, placement.parallaxX]), { stiffness: 42, damping: 28, mass: 0.4 });
   const style = {
@@ -99,24 +101,28 @@ function FloatingProduct({
   return (
     <Link
       href={`/product/${product.slug}`}
-      className={`floating-product ${active && !isActive ? "is-muted" : ""} ${isActive ? "is-active" : ""}`}
+      className={`floating-product depth-${depth} ${active && !isActive ? "is-muted" : ""} ${isActive ? "is-active" : ""}`}
       style={style}
       onMouseEnter={() => setActive(product)}
       onMouseLeave={() => setActive(null)}
       onFocus={() => setActive(product)}
       onBlur={() => setActive(null)}
       onPointerDown={() => setActive(product)}
-      data-cursor-label="VIEW"
+      data-cursor-label="view"
       aria-label={`View ${product.code} ${product.name}, ${formatCurrency(product.priceUSD, currency)}`}
     >
       <m.div className="parallax-motion" style={{ x: parallaxX, y: parallaxY }}>
         <m.div
           className="float-motion"
-          animate={reduceMotion ? undefined : { y: [0, placement.driftY, 0], x: [0, placement.driftX, 0], rotate: [0, placement.driftRotate, 0] }}
+          animate={reduceMotion ? undefined : { y: [0, placement.driftY * 1.3, 0], x: [0, placement.driftX * 1.2, 0], rotate: [0, placement.driftRotate * 1.2, 0] }}
           transition={reduceMotion ? undefined : { duration: placement.duration, delay: placement.delay, ease: "easeInOut", repeat: Infinity }}
         >
           <ProductVisual product={product} />
-          <span className="floating-meta"><span>{product.code} / {product.name}</span><span>{formatCurrency(product.priceUSD, currency)}</span></span>
+          <span className="floating-meta">
+            <span>{product.code.toLowerCase().replace("-", "–")} / {product.name.toLowerCase()}</span>
+            <span>{product.lensColor.toLowerCase()} lens / {product.frameColor.toLowerCase()} frame</span>
+            <span>{formatCurrency(product.priceUSD, currency)}</span>
+          </span>
         </m.div>
       </m.div>
     </Link>
@@ -126,9 +132,9 @@ function FloatingProduct({
 function EditorialBreak() {
   return <section className="editorial-break" aria-label="BLUR brand statement">
     <div className="editorial-orbit" aria-hidden="true" />
-    <p className="eyebrow">BLUR / OPTICAL STUDY</p>
-    <h1>BETWEEN<br />SEEING <i>AND</i><br />BEING SEEN.</h1>
-    <p className="editorial-copy">Sculptural eyewear built around distortion, perception, and the identity that appears in the in-between.</p>
+    <p className="eyebrow">blur / optical note 01</p>
+    <h2>between seeing<br />and being seen.</h2>
+    <p className="editorial-copy">objects for the point where perception and identity begin to shift.</p>
   </section>;
 }
 
@@ -140,19 +146,22 @@ export function HomeExperience() {
   return (
     <LazyMotion features={domAnimation}>
       <main id="objects" className="home-atmosphere" style={{ "--atmosphere": background } as CSSProperties}>
+        <PixelField color={background} />
         <Grain />
         <section className="floating-scene opening-canvas" aria-label="BLUR optical objects 01 through 05">
-          <BlurMark href={false} className="canvas-wordmark" />
-          <p className="canvas-index">OBJECTS 01—20</p>
-          <p className="canvas-scroll">SCROLL TO BLUR <span>↓</span></p>
+          <h1 className="sr-only">BLUR eyewear</h1>
+          <BlurLogo className="canvas-logo" priority />
+          <p className="canvas-index">blur eyewear / objects 01—20</p>
+          <p className="canvas-scroll">move through the collection <span>↓</span></p>
           {productZones[0].map((placement) => <FloatingProduct key={placement.productId} placement={placement} active={active} setActive={setActive} scrollY={scrollY} />)}
         </section>
 
         {productZones.slice(1).map((zone, zoneIndex) => <div key={zoneIndex}>
           <section className="floating-scene" aria-label={`BLUR optical objects ${zoneIndex * 5 + 6} through ${zoneIndex * 5 + 10}`}>
+            <p className="scene-index">object research / {String(zoneIndex * 5 + 6).padStart(2, "0")}—{String(zoneIndex * 5 + 10).padStart(2, "0")}</p>
             {zone.map((placement) => <FloatingProduct key={placement.productId} placement={placement} active={active} setActive={setActive} scrollY={scrollY} />)}
-            {zoneIndex === 0 && <p className="scene-whisper whisper-right">THE FACE<br />AS A SURFACE.</p>}
-            {zoneIndex === 1 && <p className="scene-whisper whisper-left">NOT QUITE<br />SUNGLASSES.</p>}
+            {zoneIndex === 0 && <p className="scene-whisper whisper-right">study 01 / facial geometry</p>}
+            {zoneIndex === 1 && <p className="scene-whisper whisper-left">not quite sunglasses.</p>}
           </section>
           {zoneIndex === 1 && <EditorialBreak />}
         </div>)}
@@ -161,13 +170,13 @@ export function HomeExperience() {
           <div className="campaign-orb orb-one" />
           <div className="campaign-orb orb-two" />
           <div className="campaign-teaser-content">
-            <p className="eyebrow">BLUR CAMPAIGN 001</p>
-            <h2>AFTER<br /><i>DARK</i></h2>
-            <p>Four cinematic studies of identity in motion.</p>
-            <Link href="/campaign" className="editorial-link" data-cursor-label="VIEW">ENTER CAMPAIGN <span>↗</span></Link>
+            <p className="eyebrow">campaign 001 / after dark</p>
+            <h2>after<br /><i>dark</i></h2>
+            <p>four cinematic studies of identity in motion.</p>
+            <Link href="/campaign" className="editorial-link" data-cursor-label="view">enter campaign <span>↗</span></Link>
           </div>
         </section>
-        <footer className="minimal-footer"><span>BLUR / 2026</span><span>OBJECTS FOR PERCEPTION</span><Link href="/#objects">RETURN TO OBJECTS ↑</Link></footer>
+        <footer className="minimal-footer"><span>blur eyewear / 2026</span><Link href="/campaign">campaign</Link><Link href="/about">about</Link><Link href="/#objects">objects ↑</Link></footer>
       </main>
     </LazyMotion>
   );

@@ -16,27 +16,27 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
         <nav className="glass-nav" aria-label="Main navigation">
           <BlurMark className="nav-mark" />
           <div className="nav-links">
-            <Link href="/#objects">OBJECTS</Link>
-            <Link href="/campaign">CAMPAIGN</Link>
-            <Link href="/about">ABOUT</Link>
+            <Link href="/#objects">objects</Link>
+            <Link href="/campaign">campaign</Link>
+            <Link href="/about">about</Link>
           </div>
           <label className="currency-select">
             <span className="sr-only">Currency</span>
             <select value={currency} onChange={(event) => setCurrency(event.target.value as CurrencyCode)} aria-label="Select currency">
-              {currencies.map((option) => <option key={option.code} value={option.code}>{option.code}</option>)}
+              {currencies.map((option) => <option key={option.code} value={option.code}>{option.code.toLowerCase()}</option>)}
             </select>
           </label>
-          <Link href="/cart" className="bag-link">BAG <span>({cartCount})</span></Link>
-          <button className="menu-toggle" type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-menu">MENU</button>
+          <Link href="/cart" className="bag-link">bag <span>{cartCount}</span></Link>
+          <button className="menu-toggle" type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-menu">menu</button>
         </nav>
         {menuOpen && (
           <div className="mobile-menu glass-panel" id="mobile-menu">
-            <Link href="/#objects" onClick={() => setMenuOpen(false)}>OBJECTS</Link>
-            <Link href="/campaign" onClick={() => setMenuOpen(false)}>CAMPAIGN</Link>
-            <Link href="/about" onClick={() => setMenuOpen(false)}>ABOUT</Link>
-            <label className="mobile-currency">CURRENCY
+            <Link href="/#objects" onClick={() => setMenuOpen(false)}>objects</Link>
+            <Link href="/campaign" onClick={() => setMenuOpen(false)}>campaign</Link>
+            <Link href="/about" onClick={() => setMenuOpen(false)}>about</Link>
+            <label className="mobile-currency">currency
               <select value={currency} onChange={(event) => setCurrency(event.target.value as CurrencyCode)}>
-                {currencies.map((option) => <option key={option.code} value={option.code}>{option.code} — {option.label}</option>)}
+                {currencies.map((option) => <option key={option.code} value={option.code}>{option.code.toLowerCase()} — {option.label}</option>)}
               </select>
             </label>
           </div>
