@@ -12,7 +12,7 @@ export function CustomCursor() {
 function CursorSurface() {
   const [enabled, setEnabled] = useState(false);
   const [position, setPosition] = useState({ x: -100, y: -100 });
-  const [label, setLabel] = useState("");
+  const [showHand, setShowHand] = useState(false);
 
   useEffect(() => {
     const pointer = window.matchMedia("(pointer: fine)");
@@ -25,26 +25,25 @@ function CursorSurface() {
     desktop.addEventListener("change", updateCapability);
 
     const productTarget = (target: EventTarget | null) => (
-      target instanceof Element ? target.closest<HTMLElement>("[data-product-link]") : null
+      target instanceof Element ? target.closest<HTMLElement>("[data-product-link][data-cursor-hand]") : null
     );
-    const clearLabel = () => setLabel("");
+    const clearHand = () => setShowHand(false);
     const move = (event: PointerEvent) => {
       setPosition({ x: event.clientX, y: event.clientY });
-      const target = productTarget(event.target);
-      setLabel(target?.dataset.cursorLabel ?? "");
+      setShowHand(Boolean(productTarget(event.target)));
     };
     const leaveProduct = (event: PointerEvent) => {
-      if (productTarget(event.target) && !productTarget(event.relatedTarget)) clearLabel();
+      if (productTarget(event.target) && !productTarget(event.relatedTarget)) clearHand();
     };
     const clearOnVisibilityChange = () => {
-      if (document.visibilityState !== "visible") clearLabel();
+      if (document.visibilityState !== "visible") clearHand();
     };
     window.addEventListener("pointermove", move, { passive: true });
     window.addEventListener("pointerout", leaveProduct, { passive: true });
-    window.addEventListener("pointercancel", clearLabel, true);
-    window.addEventListener("scroll", clearLabel, { passive: true, capture: true });
-    window.addEventListener("blur", clearLabel);
-    window.addEventListener("popstate", clearLabel);
+    window.addEventListener("pointercancel", clearHand, true);
+    window.addEventListener("scroll", clearHand, { passive: true, capture: true });
+    window.addEventListener("blur", clearHand);
+    window.addEventListener("popstate", clearHand);
     document.addEventListener("visibilitychange", clearOnVisibilityChange);
     return () => {
       pointer.removeEventListener("change", updateCapability);
@@ -52,22 +51,22 @@ function CursorSurface() {
       desktop.removeEventListener("change", updateCapability);
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerout", leaveProduct);
-      window.removeEventListener("pointercancel", clearLabel, true);
-      window.removeEventListener("scroll", clearLabel, true);
-      window.removeEventListener("blur", clearLabel);
-      window.removeEventListener("popstate", clearLabel);
+      window.removeEventListener("pointercancel", clearHand, true);
+      window.removeEventListener("scroll", clearHand, true);
+      window.removeEventListener("blur", clearHand);
+      window.removeEventListener("popstate", clearHand);
       document.removeEventListener("visibilitychange", clearOnVisibilityChange);
     };
   }, []);
 
-  if (!enabled) return null;
+  if (!enabled || !showHand) return null;
   return (
     <span
-      className={`custom-cursor ${label ? "cursor-labelled" : ""}`}
+      className="custom-cursor"
       style={{ transform: `translate3d(${position.x}px, ${position.y}px, 0)` }}
       aria-hidden="true"
     >
-      {label}
+      ☞
     </span>
   );
 }

@@ -13,12 +13,9 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { products, type Product } from "@/data/products";
-import { formatCurrency } from "@/lib/currency";
 import { BlurLogo } from "@/components/brand/blur-mark";
 import { ProductVisual } from "@/components/product/product-visual";
 import { Grain } from "@/components/ui/grain";
-import { PixelField } from "@/components/ui/pixel-field";
-import { useBlurStore } from "@/store/blur-store";
 
 type Placement = {
   productId: string;
@@ -40,7 +37,7 @@ type Placement = {
 // This composition is intentionally hand-positioned. It must never randomize between renders.
 const productZones: Placement[][] = [
   [
-    { productId: "blr-001", x: "9%", y: "25%", width: "28%", rotation: "-12deg", scale: 0.95, mobileOrder: 1, driftY: -10, driftX: 4, driftRotate: 1, duration: 9, delay: 0, parallaxY: -38, parallaxX: 6 },
+    { productId: "blr-001", x: "9%", y: "25%", width: "26%", rotation: "-12deg", scale: 0.89, mobileOrder: 1, driftY: -10, driftX: 4, driftRotate: 1, duration: 9, delay: 0, parallaxY: -38, parallaxX: 6 },
     { productId: "blr-002", x: "63%", y: "18%", width: "22%", rotation: "9deg", scale: 0.83, mobileOrder: 2, driftY: 9, driftX: -5, driftRotate: -1, duration: 11, delay: 1.5, parallaxY: 42, parallaxX: -8 },
     { productId: "blr-003", x: "36%", y: "51%", width: "23%", rotation: "-2deg", scale: 0.8, mobileOrder: 3, driftY: -7, driftX: 3, driftRotate: 0.5, duration: 13, delay: 0.3, parallaxY: -28, parallaxX: 9 },
     { productId: "blr-004", x: "76%", y: "62%", width: "18%", rotation: "14deg", scale: 0.7, mobileOrder: 4, driftY: 7, driftX: 4, driftRotate: -1, duration: 10, delay: 2.2, parallaxY: 34, parallaxX: -3 },
@@ -83,7 +80,6 @@ function FloatingProduct({
   scrollY: MotionValue<number>;
 }) {
   const product = byId.get(placement.productId)!;
-  const { currency } = useBlurStore();
   const reduceMotion = useReducedMotion();
   const isActive = active?.id === product.id;
   const depth = placement.scale >= 0.94 ? "near" : placement.scale <= 0.72 ? "far" : "mid";
@@ -110,8 +106,8 @@ function FloatingProduct({
       onBlur={() => setActive(null)}
       onPointerDown={() => setActive(product)}
       data-product-link="true"
-      data-cursor-label="view"
-      aria-label={`View ${product.code} ${product.name}, ${formatCurrency(product.priceUSD, currency)}`}
+      data-cursor-hand="true"
+      aria-label={`Open product details for ${product.code}`}
     >
       <m.div className="parallax-motion" style={{ x: parallaxX, y: parallaxY }}>
         <m.div
@@ -120,11 +116,6 @@ function FloatingProduct({
           transition={reduceMotion ? undefined : { duration: placement.duration, delay: placement.delay, ease: "easeInOut", repeat: Infinity }}
         >
           <ProductVisual product={product} />
-          <span className="floating-meta">
-            <span>{product.code.toLowerCase().replace("-", "–")} / {product.name.toLowerCase()}</span>
-            <span>{product.lensColor.toLowerCase()} lens / {product.frameColor.toLowerCase()} frame</span>
-            <span>{formatCurrency(product.priceUSD, currency)}</span>
-          </span>
         </m.div>
       </m.div>
     </Link>
@@ -135,7 +126,9 @@ export function HomeExperience() {
   const [active, setActive] = useState<Product | null>(null);
   const { scrollY } = useScroll();
   const clearActive = useCallback(() => setActive(null), []);
-  const background = active?.backgroundColor ?? "#b8d6e1";
+  const atmosphere = active
+    ? `color-mix(in srgb, #77736e 93%, ${active.backgroundColor} 7%)`
+    : "#77736e";
 
   useEffect(() => {
     const clearForPageChange = () => clearActive();
@@ -161,13 +154,12 @@ export function HomeExperience() {
     <LazyMotion features={domAnimation}>
       <main
         id="objects"
-        className="home-atmosphere"
-        style={{ "--atmosphere": background } as CSSProperties}
+        className={`home-atmosphere ${active ? "has-active-product" : ""}`}
+        style={{ "--atmosphere": atmosphere } as CSSProperties}
         onPointerMove={handleCanvasPointerMove}
         onPointerLeave={clearActive}
         onPointerCancel={clearActive}
       >
-        <PixelField color={background} />
         <Grain />
         <section className="product-canvas" aria-label="BLUR optical objects 01 through 20">
           <h1 className="sr-only">BLUR eyewear objects 01 through 20</h1>
