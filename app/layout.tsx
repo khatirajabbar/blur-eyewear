@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
-  return <html lang="en"><body><AppProviders>{children}</AppProviders></body></html>;
+  return <html lang="en" data-scroll-behavior="smooth"><body><AppProviders>{children}</AppProviders></body></html>;
 }

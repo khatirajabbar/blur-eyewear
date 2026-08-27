@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
 import {
   LazyMotion,
   domAnimation,
@@ -103,11 +103,13 @@ function FloatingProduct({
       href={`/product/${product.slug}`}
       className={`floating-product depth-${depth} ${active && !isActive ? "is-muted" : ""} ${isActive ? "is-active" : ""}`}
       style={style}
-      onMouseEnter={() => setActive(product)}
-      onMouseLeave={() => setActive(null)}
+      onPointerEnter={() => setActive(product)}
+      onPointerLeave={() => setActive(null)}
+      onPointerCancel={() => setActive(null)}
       onFocus={() => setActive(product)}
       onBlur={() => setActive(null)}
       onPointerDown={() => setActive(product)}
+      data-product-link="true"
       data-cursor-label="view"
       aria-label={`View ${product.code} ${product.name}, ${formatCurrency(product.priceUSD, currency)}`}
     >
@@ -129,54 +131,58 @@ function FloatingProduct({
   );
 }
 
-function EditorialBreak() {
-  return <section className="editorial-break" aria-label="BLUR brand statement">
-    <div className="editorial-orbit" aria-hidden="true" />
-    <p className="eyebrow">blur / optical note 01</p>
-    <h2>between seeing<br />and being seen.</h2>
-    <p className="editorial-copy">objects for the point where perception and identity begin to shift.</p>
-  </section>;
-}
-
 export function HomeExperience() {
   const [active, setActive] = useState<Product | null>(null);
   const { scrollY } = useScroll();
+  const clearActive = useCallback(() => setActive(null), []);
   const background = active?.backgroundColor ?? "#b8d6e1";
+
+  useEffect(() => {
+    const clearForPageChange = () => clearActive();
+
+    window.addEventListener("scroll", clearForPageChange, { passive: true });
+    window.addEventListener("blur", clearForPageChange);
+    window.addEventListener("popstate", clearForPageChange);
+
+    return () => {
+      window.removeEventListener("scroll", clearForPageChange);
+      window.removeEventListener("blur", clearForPageChange);
+      window.removeEventListener("popstate", clearForPageChange);
+    };
+  }, [clearActive]);
+
+  const handleCanvasPointerMove = (event: ReactPointerEvent<HTMLElement>) => {
+    if (event.target instanceof Element && !event.target.closest("[data-product-link]")) {
+      clearActive();
+    }
+  };
 
   return (
     <LazyMotion features={domAnimation}>
-      <main id="objects" className="home-atmosphere" style={{ "--atmosphere": background } as CSSProperties}>
+      <main
+        id="objects"
+        className="home-atmosphere"
+        style={{ "--atmosphere": background } as CSSProperties}
+        onPointerMove={handleCanvasPointerMove}
+        onPointerLeave={clearActive}
+        onPointerCancel={clearActive}
+      >
         <PixelField color={background} />
         <Grain />
-        <section className="floating-scene opening-canvas" aria-label="BLUR optical objects 01 through 05">
-          <h1 className="sr-only">BLUR eyewear</h1>
-          <BlurLogo className="canvas-logo" priority />
-          <p className="canvas-index">blur eyewear / objects 01—20</p>
-          <p className="canvas-scroll">move through the collection <span>↓</span></p>
-          {productZones[0].map((placement) => <FloatingProduct key={placement.productId} placement={placement} active={active} setActive={setActive} scrollY={scrollY} />)}
+        <section className="product-canvas" aria-label="BLUR optical objects 01 through 20">
+          <h1 className="sr-only">BLUR eyewear objects 01 through 20</h1>
+          {productZones.map((zone, zoneIndex) => (
+            <section key={zoneIndex} className={`floating-scene ${zoneIndex === 0 ? "opening-canvas" : ""}`} aria-label={`BLUR optical objects ${zoneIndex * 5 + 1} through ${zoneIndex * 5 + 5}`}>
+              {zoneIndex === 0 && <>
+                <BlurLogo className="canvas-logo" priority />
+                <p className="canvas-index">objects 01—20</p>
+                <p className="canvas-scroll">move through the collection <span>↓</span></p>
+              </>}
+              {zone.map((placement) => <FloatingProduct key={placement.productId} placement={placement} active={active} setActive={setActive} scrollY={scrollY} />)}
+            </section>
+          ))}
         </section>
-
-        {productZones.slice(1).map((zone, zoneIndex) => <div key={zoneIndex}>
-          <section className="floating-scene" aria-label={`BLUR optical objects ${zoneIndex * 5 + 6} through ${zoneIndex * 5 + 10}`}>
-            <p className="scene-index">object research / {String(zoneIndex * 5 + 6).padStart(2, "0")}—{String(zoneIndex * 5 + 10).padStart(2, "0")}</p>
-            {zone.map((placement) => <FloatingProduct key={placement.productId} placement={placement} active={active} setActive={setActive} scrollY={scrollY} />)}
-            {zoneIndex === 0 && <p className="scene-whisper whisper-right">study 01 / facial geometry</p>}
-            {zoneIndex === 1 && <p className="scene-whisper whisper-left">not quite sunglasses.</p>}
-          </section>
-          {zoneIndex === 1 && <EditorialBreak />}
-        </div>)}
-
-        <section className="campaign-teaser">
-          <div className="campaign-orb orb-one" />
-          <div className="campaign-orb orb-two" />
-          <div className="campaign-teaser-content">
-            <p className="eyebrow">campaign 001 / after dark</p>
-            <h2>after<br /><i>dark</i></h2>
-            <p>four cinematic studies of identity in motion.</p>
-            <Link href="/campaign" className="editorial-link" data-cursor-label="view">enter campaign <span>↗</span></Link>
-          </div>
-        </section>
-        <footer className="minimal-footer"><span>blur eyewear / 2026</span><Link href="/campaign">campaign</Link><Link href="/about">about</Link><Link href="/#objects">objects ↑</Link></footer>
+        <footer className="minimal-footer"><span>blur / 2026</span><Link href="/campaign">campaign</Link><Link href="/about">about</Link><span>objects 01—20</span></footer>
       </main>
     </LazyMotion>
   );

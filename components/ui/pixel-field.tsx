@@ -4,8 +4,8 @@ import { useEffect, useRef } from "react";
 
 type Rgb = { r: number; g: number; b: number };
 
-const fieldWidth = 48;
-const fieldHeight = 32;
+const fieldWidth = 72;
+const fieldHeight = 48;
 
 function hexToRgb(value: string): Rgb {
   const hex = value.replace("#", "");
