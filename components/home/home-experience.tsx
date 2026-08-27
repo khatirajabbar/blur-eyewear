@@ -106,7 +106,6 @@ function FloatingProduct({
       onBlur={() => setActive(null)}
       onPointerDown={() => setActive(product)}
       data-product-link="true"
-      data-cursor-hand="true"
       aria-label={`Open product details for ${product.code}`}
     >
       <m.div className="parallax-motion" style={{ x: parallaxX, y: parallaxY }}>
@@ -127,8 +126,8 @@ export function HomeExperience() {
   const { scrollY } = useScroll();
   const clearActive = useCallback(() => setActive(null), []);
   const atmosphere = active
-    ? `color-mix(in srgb, #77736e 93%, ${active.backgroundColor} 7%)`
-    : "#77736e";
+    ? `color-mix(in srgb, #9b9790 96%, ${active.backgroundColor} 4%)`
+    : "#9b9790";
 
   useEffect(() => {
     const clearForPageChange = () => clearActive();
