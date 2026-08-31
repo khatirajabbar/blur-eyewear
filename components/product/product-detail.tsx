@@ -1,13 +1,17 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 import type { Product } from "@/data/products";
 import { formatCurrency } from "@/lib/currency";
-import { ProductVisual } from "@/components/product/product-visual";
 import { useBlurStore } from "@/store/blur-store";
+
+const viewLabels = ["front", "side", "rear"];
 
 export function ProductDetail({ product }: { product: Product }) {
   const { currency, addToCart } = useBlurStore();
+  const [selectedView, setSelectedView] = useState(0);
   const [added, setAdded] = useState(false);
   const handleAdd = () => {
     addToCart(product.id);
@@ -15,23 +19,46 @@ export function ProductDetail({ product }: { product: Product }) {
     window.setTimeout(() => setAdded(false), 1500);
   };
 
-  return <main className="product-page" style={{ "--product-page-bg": product.backgroundColor } as CSSProperties}>
-    <div className="product-hero-visual"><ProductVisual product={product} size="large" label /></div>
-    <section className="product-info">
-      <p className="eyebrow">{product.code} / OPTICAL OBJECT</p>
-      <h1>{product.name}</h1>
-      <p className="product-price">{formatCurrency(product.priceUSD, currency)}</p>
-      <p className="product-description">{product.description}</p>
-      <dl className="product-specs">
-        <div><dt>FRAME</dt><dd>{product.frameColor}</dd></div>
-        <div><dt>LENS</dt><dd>{product.lensColor}</dd></div>
-        <div><dt>MATERIAL</dt><dd>{product.material}</dd></div>
-        <div><dt>FIT</dt><dd>{product.fit}</dd></div>
-        <div><dt>DIMENSIONS</dt><dd>{product.dimensions}</dd></div>
-        <div><dt>AVAILABILITY</dt><dd>{product.inventory <= 5 ? `Only ${product.inventory} objects left` : `${product.inventory} objects available`}</dd></div>
-      </dl>
-      <button className="add-button" onClick={handleAdd}>{added ? "ADDED TO BAG" : "ADD TO BAG"} <span>+</span></button>
-      <p className="asset-note">Product renders will replace this temporary object study at <code>{product.primaryImage}</code>.</p>
-    </section>
-  </main>;
+  return (
+    <main className="product-page">
+      <section className="product-stage" aria-label={`${product.name} product imagery`}>
+        <Link href="/shop" className="product-back">← all frames</Link>
+        <p className="product-view-count">{String(selectedView + 1).padStart(2, "0")} / 03</p>
+        <div className="product-image-frame">
+          <Image
+            src={product.galleryImages[selectedView]}
+            alt={`${product.name}, ${viewLabels[selectedView]} view`}
+            fill
+            priority
+            sizes="(max-width: 860px) 100vw, 68vw"
+            className="product-image"
+          />
+        </div>
+        <div className="product-gallery" aria-label="Product views">
+          {product.galleryImages.map((image, index) => (
+            <button key={image} type="button" className={selectedView === index ? "is-selected" : ""} onClick={() => setSelectedView(index)} aria-label={`Show ${viewLabels[index]} view`}>
+              <Image src={image} alt="" fill sizes="88px" />
+              <span>{viewLabels[index]}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <aside className="product-info">
+        <p className="eyebrow">{product.code} / collection 01</p>
+        <h1>{product.name}</h1>
+        <p className="product-description">{product.description}</p>
+        <p className="product-price">{formatCurrency(product.priceUSD, currency)}</p>
+        <dl className="product-specs">
+          <div><dt>frame</dt><dd>{product.frameColor}</dd></div>
+          <div><dt>lens</dt><dd>{product.lensColor}</dd></div>
+          <div><dt>material</dt><dd>{product.material}</dd></div>
+          <div><dt>fit</dt><dd>{product.fit}</dd></div>
+          <div><dt>dimensions</dt><dd>{product.dimensions}</dd></div>
+          <div><dt>availability</dt><dd>{product.inventory <= 5 ? `${product.inventory} pieces left` : `${product.inventory} pieces available`}</dd></div>
+        </dl>
+        <button className="add-button" onClick={handleAdd}>{added ? "added to bag" : "add to bag"}<span>{formatCurrency(product.priceUSD, currency)}</span></button>
+      </aside>
+    </main>
+  );
 }
