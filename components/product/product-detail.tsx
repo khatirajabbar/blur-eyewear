@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { LookVisual } from "@/components/looks/look-visual";
 import type { Product } from "@/data/products";
 import { formatCurrency } from "@/lib/currency";
 import { useBlurStore } from "@/store/blur-store";
@@ -23,16 +24,25 @@ export function ProductDetail({ product }: { product: Product }) {
     <main className="product-page">
       <section className="product-stage" aria-label={`${product.name} product imagery`}>
         <Link href="/shop" className="product-back">← all frames</Link>
-        <p className="product-view-count">{String(selectedView + 1).padStart(2, "0")} / 03</p>
-        <div className="product-image-frame">
-          <Image
-            src={product.galleryImages[selectedView]}
-            alt={`${product.name}, ${viewLabels[selectedView]} view`}
-            fill
-            priority
-            sizes="(max-width: 860px) 100vw, 68vw"
-            className="product-image"
-          />
+        <p className="product-view-count">object {String(selectedView + 1).padStart(2, "0")} / 03</p>
+
+        <div className="product-look-frame">
+          <LookVisual product={product} priority sizes="(max-width: 860px) 90vw, 58vw" />
+          <span>the {product.name} look</span>
+        </div>
+
+        <div className="product-object-card" aria-live="polite">
+          <div className="product-image-frame">
+            <Image
+              src={product.galleryImages[selectedView]}
+              alt={`${product.name}, ${viewLabels[selectedView]} view`}
+              fill
+              priority
+              sizes="(max-width: 860px) 47vw, 25vw"
+              className="product-image"
+            />
+          </div>
+          <span>{viewLabels[selectedView]} view</span>
         </div>
         <div className="product-gallery" aria-label="Product views">
           {product.galleryImages.map((image, index) => (
