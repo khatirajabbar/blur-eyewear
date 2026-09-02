@@ -1,11 +1,30 @@
-import { Grain } from "@/components/ui/grain";
-
-export const metadata = { title: "About — BLUR" };
+export const metadata = { title: "Info — BLUR" };
 
 export default function AboutPage() {
-  return <main className="about-page"><Grain /><section className="about-statement"><p className="eyebrow">BLUR / A FICTIONAL OPTICAL STUDIO</p><h1>BLUR EXISTS<br />IN THE SPACE<br />BETWEEN <i>SEEING</i><br />AND BEING SEEN.</h1></section>
-    <section className="about-notes" aria-label="BLUR object studies"><p className="eyebrow">object research / 2026</p><p>the face as a surface.</p><p>not quite sunglasses.</p></section>
-    <section className="about-copy"><p>We make eyewear as wearable objects: imperfect, sculptural, and a little unfamiliar.</p><p>A frame changes more than a face. It shifts the temperature of a room, interrupts a first impression, filters the world into another version of itself.</p><p>BLUR studies that small distortion—the moment identity becomes less fixed and much more interesting.</p></section>
-    <footer className="minimal-footer"><span>BLUR / 2026</span><span>MADE FOR THE IN-BETWEEN</span></footer>
-  </main>;
+  return (
+    <main className="about-page">
+      <section className="about-intro">
+        <p className="eyebrow">BLUR / collection 01</p>
+        <h1>FOCUS, SHIFTED.</h1>
+        <p className="about-lede">Eleven frames, worn as characters. A small study in silhouette, colour, and the point of view you choose.</p>
+      </section>
+
+      <section className="about-grid" aria-label="About BLUR">
+        <div>
+          <p className="eyebrow">01 / object</p>
+          <p>BLUR makes eyewear that reads clearly from a distance and changes up close.</p>
+        </div>
+        <div>
+          <p className="eyebrow">02 / collection</p>
+          <p>Collection 01 moves between transparent colour, sharp contrast, and wearable utility.</p>
+        </div>
+        <div>
+          <p className="eyebrow">03 / signal</p>
+          <p>Every frame is shown on a different person, because a pair of glasses never tells the same story twice.</p>
+        </div>
+      </section>
+
+      <footer className="minimal-footer"><span>BLUR / 2026</span><span>made for the in-between</span></footer>
+    </main>
+  );
 }

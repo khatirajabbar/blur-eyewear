@@ -2,18 +2,44 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LookVisual } from "@/components/looks/look-visual";
+import { TextShuffle } from "@/components/ui/text-shuffle";
 import type { Product } from "@/data/products";
 import { formatCurrency } from "@/lib/currency";
 import { useBlurStore } from "@/store/blur-store";
 
-const viewLabels = ["front", "side", "rear"];
+const viewLabels = ["front", "side", "rear"] as const;
+const pad = (value: number) => String(value).padStart(2, "0");
+const AUTO_ADVANCE_MS = 4800;
 
 export function ProductDetail({ product }: { product: Product }) {
   const { currency, addToCart } = useBlurStore();
   const [selectedView, setSelectedView] = useState(0);
   const [added, setAdded] = useState(false);
+  const [autoAdvance, setAutoAdvance] = useState(true);
+  const [interactionPaused, setInteractionPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotionPreference = () => setReducedMotion(mediaQuery.matches);
+
+    syncMotionPreference();
+    mediaQuery.addEventListener("change", syncMotionPreference);
+    return () => mediaQuery.removeEventListener("change", syncMotionPreference);
+  }, []);
+
+  useEffect(() => {
+    if (!autoAdvance || interactionPaused || reducedMotion) return;
+
+    const interval = window.setInterval(() => {
+      setSelectedView((current) => (current + 1) % product.galleryImages.length);
+    }, AUTO_ADVANCE_MS);
+
+    return () => window.clearInterval(interval);
+  }, [autoAdvance, interactionPaused, product.galleryImages.length, reducedMotion, selectedView]);
+
   const handleAdd = () => {
     addToCart(product.id);
     setAdded(true);
@@ -24,34 +50,79 @@ export function ProductDetail({ product }: { product: Product }) {
     <main className="product-page">
       <section className="product-stage" aria-label={`${product.name} product imagery`}>
         <Link href="/shop" className="product-back">← all frames</Link>
-        <p className="product-view-count">object {String(selectedView + 1).padStart(2, "0")} / 03</p>
+        <p className="product-view-count">object {pad(selectedView + 1)} / 03</p>
 
         <div className="product-look-frame">
           <LookVisual product={product} priority sizes="(max-width: 860px) 90vw, 58vw" />
           <span>the {product.name} look</span>
         </div>
 
-        <div className="product-object-card" aria-live="polite">
-          <div className="product-image-frame">
-            <Image
-              src={product.galleryImages[selectedView]}
-              alt={`${product.name}, ${viewLabels[selectedView]} view`}
-              fill
-              priority
-              sizes="(max-width: 860px) 47vw, 25vw"
-              className="product-image"
-            />
+        <section
+          className="product-angle-carousel"
+          aria-roledescription="carousel"
+          aria-label={`${product.name} product angles`}
+          onMouseEnter={() => setInteractionPaused(true)}
+          onMouseLeave={() => setInteractionPaused(false)}
+          onFocusCapture={() => setInteractionPaused(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+              setInteractionPaused(false);
+            }
+          }}
+          onPointerDown={(event) => {
+            if (event.pointerType === "touch") setInteractionPaused(true);
+          }}
+          onPointerUp={(event) => {
+            if (event.pointerType === "touch") setInteractionPaused(false);
+          }}
+        >
+          <div className="product-angle-heading">
+            <span>angle scan</span>
+            <span aria-hidden="true">{pad(selectedView + 1)} / 03</span>
           </div>
-          <span>{viewLabels[selectedView]} view</span>
-        </div>
-        <div className="product-gallery" aria-label="Product views">
-          {product.galleryImages.map((image, index) => (
-            <button key={image} type="button" className={selectedView === index ? "is-selected" : ""} onClick={() => setSelectedView(index)} aria-label={`Show ${viewLabels[index]} view`}>
-              <Image src={image} alt="" fill sizes="88px" />
-              <span>{viewLabels[index]}</span>
+          <div className="product-angle-media" aria-live="off">
+            <div className="product-angle-track" style={{ transform: `translateX(-${selectedView * 100}%)` }}>
+              {product.galleryImages.map((image, index) => (
+                <figure key={image} className="product-angle-slide" aria-hidden={selectedView !== index}>
+                  <Image
+                    src={image}
+                    alt={selectedView === index ? `${product.name}, ${viewLabels[index]} view` : ""}
+                    fill
+                    priority={index === 0}
+                    sizes="(max-width: 860px) 76vw, 43vw"
+                    className="product-angle-image"
+                  />
+                </figure>
+              ))}
+            </div>
+          </div>
+          <div className="product-angle-footer">
+            <div className="product-angle-controls" aria-label="Choose a product angle">
+              {product.galleryImages.map((image, index) => (
+                <button
+                  key={image}
+                  type="button"
+                  className={selectedView === index ? "is-selected" : ""}
+                  onClick={() => setSelectedView(index)}
+                  aria-pressed={selectedView === index}
+                >
+                  <span>{pad(index + 1)}</span>
+                  {viewLabels[index]}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="product-angle-toggle"
+              onClick={() => setAutoAdvance((playing) => !playing)}
+              aria-pressed={autoAdvance}
+              disabled={reducedMotion}
+              title={reducedMotion ? "Automatic motion is off because reduced motion is enabled" : undefined}
+            >
+              {reducedMotion ? "motion off" : autoAdvance ? "pause" : "play"}
             </button>
-          ))}
-        </div>
+          </div>
+        </section>
       </section>
 
       <aside className="product-info">
@@ -67,7 +138,7 @@ export function ProductDetail({ product }: { product: Product }) {
           <div><dt>dimensions</dt><dd>{product.dimensions}</dd></div>
           <div><dt>availability</dt><dd>{product.inventory <= 5 ? `${product.inventory} pieces left` : `${product.inventory} pieces available`}</dd></div>
         </dl>
-        <button className="add-button" onClick={handleAdd}>{added ? "added to bag" : "add to bag"}<span>{formatCurrency(product.priceUSD, currency)}</span></button>
+        <button className="add-button" onClick={handleAdd}><TextShuffle text={added ? "added to bag" : "add to bag"} /><span>{formatCurrency(product.priceUSD, currency)}</span></button>
       </aside>
     </main>
   );

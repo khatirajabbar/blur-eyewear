@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { LookVisual } from "@/components/looks/look-visual";
+import { TextShuffle } from "@/components/ui/text-shuffle";
 import { products } from "@/data/products";
 
 const pad = (value: number) => String(value).padStart(2, "0");
@@ -10,7 +11,6 @@ const pad = (value: number) => String(value).padStart(2, "0");
 export function HomeExperience() {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeProduct = products[activeIndex];
-  const surroundingProducts = [-2, -1, 1, 2].map((offset) => products[(activeIndex + offset + products.length) % products.length]);
 
   const selectLook = (index: number) => setActiveIndex(index);
   const stepLook = (direction: number) => setActiveIndex((index) => (index + direction + products.length) % products.length);
@@ -18,14 +18,6 @@ export function HomeExperience() {
   return (
     <main className="looks-home" id="collection">
       <section className="look-stage" aria-labelledby="look-title">
-        <div className="look-ambient" aria-hidden="true">
-          {surroundingProducts.map((product, index) => (
-            <div className={`ambient-look ambient-look-${index + 1}`} key={`${activeProduct.id}-${product.id}`}>
-              <LookVisual product={product} sizes="28vw" />
-            </div>
-          ))}
-        </div>
-
         <div className="look-stage-copy">
           <p className="eyebrow">collection 01 / 01</p>
           <p className="look-position">look {pad(activeIndex + 1)} / {pad(products.length)}</p>
@@ -36,7 +28,7 @@ export function HomeExperience() {
             <div><dt>lens</dt><dd>{activeProduct.lensColor}</dd></div>
             <div><dt>fit</dt><dd>{activeProduct.fit}</dd></div>
           </dl>
-          <Link href={`/product/${activeProduct.slug}`} className="look-discover">view frame <span>↗</span></Link>
+          <Link href={`/product/${activeProduct.slug}`} className="look-discover"><TextShuffle text="view frame" /> <span>↗</span></Link>
         </div>
 
         <Link href={`/product/${activeProduct.slug}`} className="active-look" aria-label={`View ${activeProduct.name} sunglasses`}>
@@ -70,7 +62,7 @@ export function HomeExperience() {
           <button type="button" onClick={() => stepLook(1)} aria-label="Next look">→</button>
         </div>
 
-        <Link href="/shop" className="look-all-link">{products.length} frames <span>see collection</span></Link>
+        <Link href="/shop" className="look-all-link">{products.length} frames <TextShuffle text="see collection" /></Link>
       </section>
 
       <section className="collection-statement" aria-labelledby="collection-statement-title">
