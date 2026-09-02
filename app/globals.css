@@ -26,7 +26,10 @@ button { cursor: pointer; }
 .site-header { position: fixed; z-index: 30; top: 20px; left: 20px; }
 .index-nav { display: grid; width: 312px; grid-template: "mark bag" 30px "links links" 23px / 1fr auto; align-items: center; padding: 8px 10px 7px; background: rgba(255, 255, 255, .93); border: 1px solid #ebebe8; }
 .mark-link { grid-area: mark; display: inline-flex; width: fit-content; align-items: center; }
-.blur-mark { font-size: 16px; font-weight: 800; letter-spacing: -.08em; line-height: 1; text-transform: lowercase; }
+.blur-mark { display: inline-flex; align-items: center; color: var(--ink); line-height: 1; }
+.blur-lockup-image { display: block; width: 72px; height: auto; transition: opacity 180ms ease; }
+.mark-link:hover .blur-lockup-image, .mark-link:focus-visible .blur-lockup-image { opacity: .48; }
+.blur-logo .blur-lockup-image { width: 150px; }
 .bag-link { grid-area: bag; align-self: start; padding-top: 1px; font-family: var(--mono); font-size: 9px; letter-spacing: .015em; text-transform: uppercase; }
 .bag-link span { margin-left: 4px; color: var(--muted); }
 .nav-links { grid-area: links; display: flex; gap: 13px; padding-top: 4px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 9px; letter-spacing: .015em; text-transform: uppercase; }

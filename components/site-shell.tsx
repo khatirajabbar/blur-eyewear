@@ -21,7 +21,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <Link href="/shop"><TextShuffle text="all" /> <span>{String(products.length).padStart(2, "0")}</span></Link>
             <Link href="/about"><TextShuffle text="info" /></Link>
           </div>
-          <button className="menu-toggle" type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-menu">menu</button>
+          <button className="menu-toggle" type="button" onClick={() => setMenuOpen((open) => !open)} aria-expanded={menuOpen} aria-controls="mobile-menu"><TextShuffle text="menu" /></button>
         </nav>
         {menuOpen && <div className="mobile-menu" id="mobile-menu">
           <Link href="/shop" onClick={() => setMenuOpen(false)}><TextShuffle text="all" /> {String(products.length).padStart(2, "0")}</Link>

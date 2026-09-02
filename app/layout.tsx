@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://blur-eyewear-git-main-khatira.vercel.app"),
   title: "BLUR — Collection 01",
   description: "Eleven optical characters. Sculptural eyewear seen through a series of full-body looks.",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
+  },
   openGraph: {
     title: "BLUR — Collection 01",
     description: "Eleven optical characters. Sculptural eyewear seen through a series of full-body looks.",

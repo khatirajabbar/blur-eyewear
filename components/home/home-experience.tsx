@@ -33,7 +33,7 @@ export function HomeExperience() {
 
         <Link href={`/product/${activeProduct.slug}`} className="active-look" aria-label={`View ${activeProduct.name} sunglasses`}>
           <LookVisual product={activeProduct} priority sizes="(max-width: 860px) 86vw, 52vw" />
-          <span className="active-look-hint">tap to enter</span>
+          <span className="active-look-hint"><TextShuffle text="tap to enter" /></span>
         </Link>
 
         <nav className="look-selector" aria-label="Select a collection look">
@@ -50,7 +50,7 @@ export function HomeExperience() {
                 aria-current={index === activeIndex ? "true" : undefined}
               >
                 <span>{pad(index + 1)}</span>
-                <b>{product.name}</b>
+                <b><TextShuffle text={product.name} /></b>
               </button>
             ))}
           </div>
@@ -62,7 +62,7 @@ export function HomeExperience() {
           <button type="button" onClick={() => stepLook(1)} aria-label="Next look">→</button>
         </div>
 
-        <Link href="/shop" className="look-all-link">{products.length} frames <TextShuffle text="see collection" /></Link>
+        <Link href="/shop" className="look-all-link"><span>{products.length}</span> <TextShuffle text="frames" /> <TextShuffle text="see collection" /></Link>
       </section>
 
       <section className="collection-statement" aria-labelledby="collection-statement-title">

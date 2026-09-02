@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Grain } from "@/components/ui/grain";
+import { TextShuffle } from "@/components/ui/text-shuffle";
 
 const chapters = [
   ["01", "CITY", "Reflective pavement, orbital lenses, 2:17am."],
@@ -16,6 +17,6 @@ export default function CampaignPage() {
       <div className="campaign-placeholder"><span>FILM {number}</span><div className="campaign-silhouette" /></div>
       <div><p className="eyebrow">{number} / 04</p><h2>{title}</h2><p>{copy}</p><span className="asset-note">Campaign video placeholder — add video at <code>/public/campaign/{number}.mp4</code></span></div>
     </article>)}</section>
-    <footer className="minimal-footer"><Link href="/shop">SHOP THE OBJECTS ↗</Link><span>BLUR / CAMPAIGN 001</span></footer>
+    <footer className="minimal-footer"><Link href="/shop"><TextShuffle text="shop the objects" /> ↗</Link><span>BLUR / CAMPAIGN 001</span></footer>
   </main>;
 }

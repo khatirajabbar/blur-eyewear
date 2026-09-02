@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const SHUFFLE_DURATION_MS = 250;
+// Keep the scrambled state visible for a beat, then resolve it cleanly.
+const SHUFFLE_HOLD_MS = 160;
+const SHUFFLE_RESOLVE_MS = 400;
 const UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
 const NUMBERS = "0123456789";
@@ -89,7 +91,10 @@ export function TextShuffle({ text, className }: TextShuffleProps) {
       setShuffledText(makeShuffleFrame(text, 0));
 
       const tick = (now: number) => {
-        const progress = Math.min((now - startedAt) / SHUFFLE_DURATION_MS, 1);
+        const progress = Math.min(
+          Math.max(now - startedAt - SHUFFLE_HOLD_MS, 0) / SHUFFLE_RESOLVE_MS,
+          1,
+        );
         const resolvedCharacters = Math.floor(progress * Array.from(text).length);
 
         setShuffledText(makeShuffleFrame(text, resolvedCharacters));
@@ -107,15 +112,11 @@ export function TextShuffle({ text, className }: TextShuffleProps) {
     };
 
     trigger.addEventListener("pointerenter", play);
-    trigger.addEventListener("pointerleave", reset);
     trigger.addEventListener("focus", play);
-    trigger.addEventListener("blur", reset);
 
     return () => {
       trigger.removeEventListener("pointerenter", play);
-      trigger.removeEventListener("pointerleave", reset);
       trigger.removeEventListener("focus", play);
-      trigger.removeEventListener("blur", reset);
       reset();
     };
   }, [reset, text]);

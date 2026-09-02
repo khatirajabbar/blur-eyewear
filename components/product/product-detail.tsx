@@ -11,7 +11,7 @@ import { useBlurStore } from "@/store/blur-store";
 
 const viewLabels = ["front", "side", "rear"] as const;
 const pad = (value: number) => String(value).padStart(2, "0");
-const AUTO_ADVANCE_MS = 4800;
+const AUTO_ADVANCE_MS = 3200;
 
 export function ProductDetail({ product }: { product: Product }) {
   const { currency, addToCart } = useBlurStore();
@@ -49,7 +49,7 @@ export function ProductDetail({ product }: { product: Product }) {
   return (
     <main className="product-page">
       <section className="product-stage" aria-label={`${product.name} product imagery`}>
-        <Link href="/shop" className="product-back">← all frames</Link>
+        <Link href="/shop" className="product-back">← <TextShuffle text="all frames" /></Link>
         <p className="product-view-count">object {pad(selectedView + 1)} / 03</p>
 
         <div className="product-look-frame">
@@ -107,7 +107,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   aria-pressed={selectedView === index}
                 >
                   <span>{pad(index + 1)}</span>
-                  {viewLabels[index]}
+                  <TextShuffle text={viewLabels[index]} />
                 </button>
               ))}
             </div>
@@ -119,7 +119,7 @@ export function ProductDetail({ product }: { product: Product }) {
               disabled={reducedMotion}
               title={reducedMotion ? "Automatic motion is off because reduced motion is enabled" : undefined}
             >
-              {reducedMotion ? "motion off" : autoAdvance ? "pause" : "play"}
+              <TextShuffle text={reducedMotion ? "motion off" : autoAdvance ? "pause" : "play"} />
             </button>
           </div>
         </section>
