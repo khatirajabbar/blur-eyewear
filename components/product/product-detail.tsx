@@ -11,7 +11,7 @@ import { useBlurStore } from "@/store/blur-store";
 
 const viewLabels = ["front", "side", "rear"] as const;
 const pad = (value: number) => String(value).padStart(2, "0");
-const AUTO_ADVANCE_MS = 3200;
+const AUTO_ADVANCE_MS = 2300;
 
 export function ProductDetail({ product }: { product: Product }) {
   const { cart, currency, addToCart } = useBlurStore();

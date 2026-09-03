@@ -22,6 +22,7 @@ export function LookVisual({
         alt={`${product.name} campaign look`}
         fill
         priority={priority}
+        unoptimized={product.slug === "polar-static"}
         sizes={sizes}
         className="look-visual-image"
       />
