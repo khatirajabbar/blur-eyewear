@@ -3,7 +3,7 @@ import "./globals.css";
 import { AppProviders } from "@/components/app-providers";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://blur-eyewear-git-main-khatira.vercel.app"),
+  metadataBase: new URL("https://blur-eyewear.vercel.app"),
   title: "BLUR — Collection 01",
   description: "Eleven optical characters. Sculptural eyewear seen through a series of full-body looks.",
   icons: {

@@ -24,6 +24,10 @@
 .DS_Store
 *.pem
 
+# Local source exports; the optimized header asset is committed separately.
+public/brand/blur-lockup-dark.pn.png
+public/brand/blur-lockup-transparent.png.png
+
 # debug
 npm-debug.log*
 yarn-debug.log*

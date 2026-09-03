@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LookVisual } from "@/components/looks/look-visual";
 import { TextShuffle } from "@/components/ui/text-shuffle";
 import type { Product } from "@/data/products";
@@ -14,12 +14,17 @@ const pad = (value: number) => String(value).padStart(2, "0");
 const AUTO_ADVANCE_MS = 3200;
 
 export function ProductDetail({ product }: { product: Product }) {
-  const { currency, addToCart } = useBlurStore();
+  const { cart, currency, addToCart } = useBlurStore();
   const [selectedView, setSelectedView] = useState(0);
   const [added, setAdded] = useState(false);
   const [autoAdvance, setAutoAdvance] = useState(true);
   const [interactionPaused, setInteractionPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const addedResetRef = useRef<number | null>(null);
+  const quantityInBag = cart.find((item) => item.productId === product.id)?.quantity ?? 0;
+  const remainingInventory = Math.max(product.inventory - quantityInBag, 0);
+  const unavailable = product.inventory === 0;
+  const atInventoryLimit = !unavailable && remainingInventory === 0;
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -38,12 +43,27 @@ export function ProductDetail({ product }: { product: Product }) {
     }, AUTO_ADVANCE_MS);
 
     return () => window.clearInterval(interval);
-  }, [autoAdvance, interactionPaused, product.galleryImages.length, reducedMotion, selectedView]);
+  }, [autoAdvance, interactionPaused, product.galleryImages.length, reducedMotion]);
+
+  useEffect(() => () => {
+    if (addedResetRef.current !== null) window.clearTimeout(addedResetRef.current);
+  }, []);
 
   const handleAdd = () => {
+    if (unavailable || atInventoryLimit) return;
+
     addToCart(product.id);
     setAdded(true);
-    window.setTimeout(() => setAdded(false), 1500);
+    if (addedResetRef.current !== null) window.clearTimeout(addedResetRef.current);
+    addedResetRef.current = window.setTimeout(() => {
+      setAdded(false);
+      addedResetRef.current = null;
+    }, 1500);
+  };
+
+  const selectView = (index: number) => {
+    setSelectedView(index);
+    setAutoAdvance(false);
   };
 
   return (
@@ -75,6 +95,12 @@ export function ProductDetail({ product }: { product: Product }) {
           onPointerUp={(event) => {
             if (event.pointerType === "touch") setInteractionPaused(false);
           }}
+          onPointerCancel={(event) => {
+            if (event.pointerType === "touch") setInteractionPaused(false);
+          }}
+          onLostPointerCapture={(event) => {
+            if (event.pointerType === "touch") setInteractionPaused(false);
+          }}
         >
           <div className="product-angle-heading">
             <span>angle scan</span>
@@ -103,7 +129,7 @@ export function ProductDetail({ product }: { product: Product }) {
                   key={image}
                   type="button"
                   className={selectedView === index ? "is-selected" : ""}
-                  onClick={() => setSelectedView(index)}
+                  onClick={() => selectView(index)}
                   aria-pressed={selectedView === index}
                 >
                   <span>{pad(index + 1)}</span>
@@ -136,9 +162,9 @@ export function ProductDetail({ product }: { product: Product }) {
           <div><dt>material</dt><dd>{product.material}</dd></div>
           <div><dt>fit</dt><dd>{product.fit}</dd></div>
           <div><dt>dimensions</dt><dd>{product.dimensions}</dd></div>
-          <div><dt>availability</dt><dd>{product.inventory <= 5 ? `${product.inventory} pieces left` : `${product.inventory} pieces available`}</dd></div>
+          <div><dt>availability</dt><dd>{unavailable ? "sold out" : remainingInventory <= 5 ? `${remainingInventory} pieces left` : `${remainingInventory} pieces available`}</dd></div>
         </dl>
-        <button className="add-button" onClick={handleAdd}><TextShuffle text={added ? "added to bag" : "add to bag"} /><span>{formatCurrency(product.priceUSD, currency)}</span></button>
+        <button className="add-button" disabled={unavailable || atInventoryLimit} onClick={handleAdd}><TextShuffle text={unavailable ? "sold out" : atInventoryLimit ? "all in bag" : added ? "added to bag" : "add to bag"} /><span>{formatCurrency(product.priceUSD, currency)}</span></button>
       </aside>
     </main>
   );

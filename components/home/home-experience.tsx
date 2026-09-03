@@ -62,7 +62,7 @@ export function HomeExperience() {
           <button type="button" onClick={() => stepLook(1)} aria-label="Next look">→</button>
         </div>
 
-        <Link href="/shop" className="look-all-link"><span>{products.length}</span> <TextShuffle text="frames" /> <TextShuffle text="see collection" /></Link>
+        <Link href="/shop" className="look-all-link"><span className="look-all-count">{products.length}</span> <TextShuffle text="frames" /> <TextShuffle text="see collection" /></Link>
       </section>
 
       <section className="collection-statement" aria-labelledby="collection-statement-title">
