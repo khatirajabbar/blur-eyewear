@@ -16,6 +16,7 @@ export function ProductVisual({ product, className, priority = false }: ProductV
         alt={`${product.name} sunglasses`}
         fill
         priority={priority}
+        unoptimized
         sizes="(max-width: 700px) 43vw, (max-width: 1200px) 17vw, 12vw"
         className="product-visual-image"
       />

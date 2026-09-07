@@ -3,17 +3,25 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { products } from "@/data/products";
 import { currencies, type CurrencyCode } from "@/lib/currency";
+import { locales, type CopyKey, type LocaleCode } from "@/lib/i18n";
 
 export type CartItem = { productId: string; quantity: number };
+export type StoreToast = { id: number; productId?: string; messageKey?: CopyKey };
 
 type BlurStore = {
   cart: CartItem[];
   currency: CurrencyCode;
+  locale: LocaleCode;
   hydrated: boolean;
+  toast: StoreToast | null;
   addToCart: (productId: string) => void;
   removeFromCart: (productId: string) => void;
   setQuantity: (productId: string, quantity: number) => void;
   setCurrency: (currency: CurrencyCode) => void;
+  setLocale: (locale: LocaleCode) => void;
+  clearCart: () => void;
+  showToast: (messageKey: CopyKey) => void;
+  dismissToast: () => void;
   cartCount: number;
 };
 
@@ -23,6 +31,7 @@ const productById = new Map(products.map((product) => [product.id, product]));
 
 const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
 const isCurrencyCode = (value: unknown): value is CurrencyCode => typeof value === "string" && currencies.some((currency) => currency.code === value);
+const isLocaleCode = (value: unknown): value is LocaleCode => typeof value === "string" && locales.some((locale) => locale === value);
 
 function normalizeCart(value: unknown): CartItem[] {
   if (!Array.isArray(value)) return [];
@@ -48,7 +57,9 @@ function normalizeCart(value: unknown): CartItem[] {
 export function BlurStoreProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [currency, setCurrency] = useState<CurrencyCode>("USD");
+  const [locale, setLocale] = useState<LocaleCode>("en");
   const [hydrated, setHydrated] = useState(false);
+  const [toast, setToast] = useState<StoreToast | null>(null);
 
   useEffect(() => {
     const restore = window.setTimeout(() => {
@@ -59,6 +70,7 @@ export function BlurStoreProvider({ children }: { children: React.ReactNode }) {
           if (isRecord(parsed)) {
             setCart(normalizeCart(parsed.cart));
             if (isCurrencyCode(parsed.currency)) setCurrency(parsed.currency);
+            if (isLocaleCode(parsed.locale)) setLocale(parsed.locale);
           }
         }
       } catch {
@@ -74,28 +86,34 @@ export function BlurStoreProvider({ children }: { children: React.ReactNode }) {
     if (!hydrated) return;
 
     try {
-      window.localStorage.setItem(storageKey, JSON.stringify({ cart, currency }));
+      window.localStorage.setItem(storageKey, JSON.stringify({ cart, currency, locale }));
     } catch {
       // Keep the current session usable if the browser refuses to write storage.
     }
-  }, [cart, currency, hydrated]);
+  }, [cart, currency, locale, hydrated]);
 
   const value = useMemo<BlurStore>(() => ({
     cart,
     currency,
+    locale,
     hydrated,
-    addToCart: (productId) => setCart((current) => {
+    toast,
+    addToCart: (productId) => {
       const product = productById.get(productId);
-      if (!product || product.inventory <= 0) return current;
+      const quantityInCart = cart.find((item) => item.productId === productId)?.quantity ?? 0;
+      if (!product || product.inventory <= quantityInCart) return;
 
-      const found = current.find((item) => item.productId === productId);
-      if (!found) return [...current, { productId, quantity: 1 }];
+      setCart((current) => {
+        const found = current.find((item) => item.productId === productId);
+        if (!found) return [...current, { productId, quantity: 1 }];
 
-      const nextQuantity = Math.min(found.quantity + 1, product.inventory);
-      return nextQuantity === found.quantity
-        ? current
-        : current.map((item) => item.productId === productId ? { ...item, quantity: nextQuantity } : item);
-    }),
+        const nextQuantity = Math.min(found.quantity + 1, product.inventory);
+        return nextQuantity === found.quantity
+          ? current
+          : current.map((item) => item.productId === productId ? { ...item, quantity: nextQuantity } : item);
+      });
+      setToast({ id: Date.now(), productId });
+    },
     removeFromCart: (productId) => setCart((current) => current.filter((item) => item.productId !== productId)),
     setQuantity: (productId, quantity) => setCart((current) => {
       const product = productById.get(productId);
@@ -109,9 +127,12 @@ export function BlurStoreProvider({ children }: { children: React.ReactNode }) {
         : current.map((item) => item.productId === productId ? { ...item, quantity: nextQuantity } : item);
     }),
     setCurrency,
-    // The bag badge counts distinct frames; each line still keeps its own quantity.
-    cartCount: cart.length,
-  }), [cart, currency, hydrated]);
+    setLocale,
+    clearCart: () => setCart([]),
+    showToast: (messageKey) => setToast({ id: Date.now(), messageKey }),
+    dismissToast: () => setToast(null),
+    cartCount: cart.reduce((total, item) => total + item.quantity, 0),
+  }), [cart, currency, hydrated, locale, toast]);
 
   return <BlurStoreContext.Provider value={value}>{children}</BlurStoreContext.Provider>;
 }
