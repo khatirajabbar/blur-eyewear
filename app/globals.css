@@ -32,7 +32,7 @@ button { cursor: pointer; }
 .blur-logo .blur-lockup-image { width: 150px; }
 .bag-link { grid-area: bag; align-self: start; padding-top: 1px; font-family: var(--mono); font-size: 9px; letter-spacing: .015em; text-transform: uppercase; }
 .bag-link span { margin-left: 4px; color: var(--muted); }
-.nav-links { grid-area: links; display: flex; min-width: 0; gap: 13px; padding-top: 4px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 9px; letter-spacing: .015em; text-transform: uppercase; }
+.nav-links { grid-area: links; align-self: stretch; display: flex; min-width: 0; gap: 13px; padding-top: 4px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 9px; letter-spacing: .015em; text-transform: uppercase; }
 .nav-links a, .bag-link { transition: opacity 180ms ease; }
 .nav-links a:hover, .bag-link:hover { opacity: .45; }
 .nav-links span { margin-left: 3px; color: var(--muted); }
