@@ -14,13 +14,18 @@ export const metadata: Metadata = {
   openGraph: {
     title: "BLUR — Collection 01",
     description: "Eleven optical characters. Sculptural eyewear seen through a series of full-body looks.",
-    images: [{ url: "/og.png", width: 1731, height: 909, alt: "BLUR Collection 01" }],
+    images: [{
+      url: "/share-card.png",
+      width: 3840,
+      height: 2160,
+      alt: "BLUR Collection 01 — eyewear characters",
+    }],
   },
   twitter: {
     card: "summary_large_image",
     title: "BLUR — Collection 01",
     description: "Eleven optical characters. Sculptural eyewear seen through a series of full-body looks.",
-    images: ["/og.png"],
+    images: ["/share-card.png"],
   },
 };
 
