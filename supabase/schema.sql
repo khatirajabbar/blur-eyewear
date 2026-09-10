@@ -79,8 +79,9 @@ end;
 $$;
 
 drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-after insert on auth.users
+drop trigger if exists on_auth_user_email_changed on auth.users;
+create trigger on_auth_user_email_changed
+after insert or update of email on auth.users
 for each row execute function public.handle_new_user();
 
 -- Add profiles for any users who existed before this schema was installed.
