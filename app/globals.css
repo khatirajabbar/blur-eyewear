@@ -229,11 +229,78 @@ button { cursor: pointer; }
 .admin-order-lines li { display: flex; justify-content: space-between; gap: 14px; }
 .admin-order-lines span { flex: 0 0 auto; font-family: var(--mono); font-size: 9px; color: var(--muted); }
 
-.cart-toast { position: fixed; z-index: 70; right: 22px; bottom: 22px; display: grid; width: min(360px, calc(100vw - 44px)); grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; align-items: center; padding: 12px 12px 12px 14px; background: var(--ink); border: 1px solid var(--ink); box-shadow: 0 12px 40px rgba(0, 0, 0, .16); color: #fff; font-family: var(--mono); font-size: 9px; letter-spacing: .02em; text-transform: uppercase; }
+.cart-toast { position: fixed; z-index: 70; top: 20px; left: 404px; display: grid; width: min(360px, calc(100vw - 426px)); grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; align-items: center; padding: 12px 12px 12px 14px; background: var(--ink); border: 1px solid var(--ink); box-shadow: 0 12px 40px rgba(0, 0, 0, .16); color: #fff; font-family: var(--mono); font-size: 9px; letter-spacing: .02em; text-transform: uppercase; }
 .cart-toast p { min-width: 0; margin: 0; line-height: 1.25; }
 .cart-toast a { padding-bottom: 2px; border-bottom: 1px solid currentColor; white-space: nowrap; }
 .cart-toast button { display: grid; width: 22px; height: 22px; padding: 0; place-items: center; background: transparent; border: 0; color: #fff; font-size: 18px; line-height: 1; }
 .cart-toast a:hover, .cart-toast button:hover { opacity: .55; }
+
+/* Checkout: BLUR's editorial handoff before the secure Stripe test page. */
+.checkout-page { min-height: 100svh; padding: 20px 30px 36px; background: var(--paper); color: var(--ink); }
+.checkout-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.checkout-header .blur-lockup-image { width: 94px; }
+.checkout-back { display: inline-flex; gap: 8px; padding-bottom: 2px; border-bottom: 1px solid currentColor; font-family: var(--mono); font-size: 9px; letter-spacing: .02em; text-transform: uppercase; }
+.checkout-intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 26vw); gap: 8vw; align-items: end; padding: clamp(68px, 10vw, 142px) 0 clamp(36px, 6vw, 84px); border-bottom: 1px solid var(--ink); }
+.checkout-intro .eyebrow { grid-column: 1 / -1; margin-bottom: 16px; color: var(--muted); }
+.checkout-intro h1 { max-width: 700px; margin: 0; font-size: clamp(54px, 7vw, 112px); font-weight: 800; letter-spacing: -.1em; line-height: .75; text-transform: uppercase; }
+.checkout-intro > p:last-child { max-width: 290px; margin: 0; font-size: 14px; line-height: 1.2; }
+.checkout-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(330px, 420px); gap: clamp(32px, 8vw, 140px); padding-top: 32px; }
+.checkout-steps { min-width: 0; }
+.checkout-step { padding: 18px 0 27px; border-top: 1px solid var(--line); }
+.checkout-step:first-child { padding-top: 0; border-top: 0; }
+.checkout-step-heading { display: grid; grid-template-columns: 36px 1fr; gap: 8px; align-items: baseline; margin-bottom: 16px; }
+.checkout-step-heading span, .checkout-summary-heading span { color: var(--muted); font-family: var(--mono); font-size: 9px; }
+.checkout-step h2 { margin: 0; font-family: var(--mono); font-size: 10px; letter-spacing: .02em; text-transform: uppercase; }
+.checkout-copy, .checkout-state { max-width: 480px; margin: 0; font-size: 14px; line-height: 1.3; }
+.checkout-note, .checkout-currency-note { margin: 14px 0 0; color: var(--muted); font-family: var(--mono); font-size: 9px; letter-spacing: .02em; line-height: 1.35; text-transform: uppercase; }
+.checkout-account { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 15px; padding: 13px 14px; border: 1px solid var(--line); }
+.checkout-account p { display: grid; gap: 4px; margin: 0; font-size: 13px; }
+.checkout-account p span { color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .02em; text-transform: uppercase; }
+.checkout-secondary, .checkout-action { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 11px 13px; border: 1px solid var(--ink); font-family: var(--mono); font-size: 10px; letter-spacing: .02em; text-transform: uppercase; transition: background 180ms ease, color 180ms ease; }
+.checkout-secondary { margin-top: 16px; background: transparent; color: var(--ink); }
+.checkout-secondary:hover { background: var(--ink); color: #fff; }
+.checkout-action { width: 100%; margin-top: 19px; background: var(--ink); color: #fff; }
+.checkout-action:hover:not(:disabled) { background: #fff; color: var(--ink); }
+.checkout-action:disabled { cursor: not-allowed; opacity: .42; }
+.checkout-form-error { margin-top: 14px; }
+.checkout-summary { position: sticky; top: 20px; align-self: start; padding: 18px; background: #fff; border: 1px solid var(--ink); }
+.checkout-summary-heading { display: flex; align-items: center; justify-content: space-between; padding-bottom: 13px; border-bottom: 1px solid var(--line); }
+.checkout-summary-heading .eyebrow { margin: 0; }
+.checkout-items { display: grid; }
+.checkout-item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid #ededeb; }
+.checkout-item-visual { position: relative; width: 64px; height: 55px; }
+.checkout-item-visual .product-visual { width: 100%; height: 100%; }
+.checkout-item-visual > span { position: absolute; top: -4px; right: -4px; display: grid; width: 17px; height: 17px; place-items: center; border-radius: 50%; background: var(--ink); color: #fff; font-family: var(--mono); font-size: 8px; }
+.checkout-item h2 { margin: 3px 0 5px; font-size: 18px; letter-spacing: -.06em; line-height: .88; text-transform: uppercase; }
+.checkout-item p { margin: 0; font-size: 10px; line-height: 1.25; }
+.checkout-item .eyebrow { color: var(--muted); font-size: 8px; }
+.checkout-item-price { font-family: var(--mono); font-size: 9px !important; white-space: nowrap; }
+.checkout-totals { display: grid; gap: 10px; margin: 18px 0 0; padding: 0; }
+.checkout-totals div { display: flex; justify-content: space-between; gap: 16px; }
+.checkout-totals dt, .checkout-totals dd { margin: 0; font-family: var(--mono); font-size: 9px; letter-spacing: .02em; text-transform: uppercase; }
+.checkout-totals dd { text-align: right; }
+.checkout-totals div:last-child { margin-top: 5px; padding-top: 13px; border-top: 1px solid var(--ink); }
+.checkout-totals div:last-child dt, .checkout-totals div:last-child dd { color: var(--ink); font-size: 12px; }
+.checkout-policy-links { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-top: clamp(55px, 9vw, 130px); padding-top: 14px; border-top: 1px solid var(--line); }
+.checkout-policy-links > span { width: 100%; margin-bottom: 2px; color: var(--muted); font-family: var(--mono); font-size: 8px; letter-spacing: .025em; text-transform: uppercase; }
+.policy-link { padding: 0; background: transparent; border: 0; border-bottom: 1px solid transparent; color: var(--muted); font-family: var(--mono); font-size: 9px; letter-spacing: .015em; text-transform: uppercase; }
+.policy-link:hover, .policy-link:focus-visible { border-color: currentColor; color: var(--ink); }
+.policy-backdrop { position: fixed; z-index: 90; inset: 0; display: grid; place-items: center; padding: 20px; background: rgba(18, 18, 18, .28); }
+.policy-sheet { width: min(620px, 100%); max-height: min(760px, calc(100svh - 40px)); overflow: auto; padding: 22px; background: #fff; border: 1px solid var(--ink); box-shadow: 0 18px 60px rgba(0, 0, 0, .16); }
+.policy-sheet-header { display: flex; align-items: start; justify-content: space-between; gap: 18px; padding-bottom: 19px; border-bottom: 1px solid var(--line); }
+.policy-sheet .eyebrow { margin: 0; color: var(--muted); }
+.policy-sheet h2 { max-width: 510px; margin: 7px 0 0; font-size: clamp(38px, 5vw, 64px); font-weight: 800; letter-spacing: -.08em; line-height: .8; text-transform: uppercase; }
+.policy-close { display: grid; width: 30px; height: 30px; flex: 0 0 auto; place-items: center; padding: 0; background: transparent; border: 1px solid var(--ink); font-size: 17px; }
+.policy-lead { max-width: 490px; margin: 21px 0 26px; font-size: 16px; line-height: 1.16; }
+.policy-sections { display: grid; border-top: 1px solid var(--line); }
+.policy-sections div { padding: 14px 0; border-bottom: 1px solid var(--line); }
+.policy-sections h3 { margin: 0 0 6px; font-family: var(--mono); font-size: 9px; letter-spacing: .02em; text-transform: uppercase; }
+.policy-sections p { max-width: 510px; margin: 0; font-size: 13px; line-height: 1.28; }
+.policy-notice { margin: 19px 0 0; padding: 11px 12px; background: #f2f2f0; font-family: var(--mono); font-size: 9px; letter-spacing: .01em; line-height: 1.35; text-transform: uppercase; }
+.checkout-empty { display: grid; min-height: calc(100svh - 100px); align-content: center; max-width: 660px; }
+.checkout-empty .eyebrow { margin-bottom: 16px; color: var(--muted); }
+.checkout-empty h1 { margin: 0 0 18px; font-size: clamp(54px, 8vw, 112px); font-weight: 800; letter-spacing: -.1em; line-height: .74; text-transform: uppercase; }
+.checkout-empty > p:last-of-type { max-width: 300px; margin: 0; font-size: 15px; line-height: 1.2; }
 
 @media (max-width: 860px) {
   .site-header { top: 12px; left: 12px; }.index-nav { width: 285px; }.nav-links, .nav-preferences { display: none; }.index-nav { grid-template: "mark bag toggle" 30px / 1fr auto auto; }.menu-toggle { display: block; padding: 0 0 0 10px; background: none; border: 0; font-family: var(--mono); font-size: 9px; text-transform: uppercase; }.mobile-menu { display: grid; width: 285px; gap: 8px; margin-top: 6px; padding: 10px; background: var(--surface); border: 1px solid var(--line); font-family: var(--mono); font-size: 9px; text-transform: uppercase; }.mobile-menu a { padding: 5px 0; border-bottom: 1px solid var(--line); }.mobile-menu a:last-child { border: 0; }.mobile-preferences { display: flex; padding-top: 8px; border-top: 1px solid var(--line); }.mobile-preferences .preference-controls { gap: 8px; }.mobile-preferences .preference-controls select { min-width: 48px; min-height: 32px; padding-inline: 8px; border: 1px solid var(--line); background: var(--paper); font-size: 9px; }.mobile-preferences .preference-controls label + label select { border-left: 1px solid var(--line); }
@@ -242,7 +309,8 @@ button { cursor: pointer; }
   .product-page { display: block; }.product-stage { position: relative; display: grid; min-height: 88svh; height: auto; grid-template-rows: minmax(0, 1fr) auto; align-content: center; gap: 12px; padding: 74px 18px 20px; border-right: 0; border-bottom: 1px solid var(--line); }.product-look-frame { width: 100%; height: min(57svh, 610px); }.product-angle-carousel { width: 100%; }.product-angle-media { height: min(24vw, 130px); min-height: 94px; }.product-angle-controls { gap: 10px; }.product-view-count { top: 19px; right: 18px; }.product-info { padding: 46px 18px; }.product-info h1 { max-width: none; font-size: clamp(48px, 12vw, 70px); }.product-specs { max-width: 470px; }
   .page-shell, .cart-page, .about-page, .campaign-page, .success-page { padding: 120px 18px 45px; }.cart-layout { grid-template-columns: 1fr; gap: 35px; }.cart-line { grid-template-columns: 86px 1fr auto; gap: 12px; min-height: 118px; }.cart-line .product-visual { width: 86px; height: 68px; }.cart-line h2 { font-size: 21px; }.quantity-control { grid-column: 2; }.remove-button { grid-column: 3; grid-row: 1; }.about-page { grid-template-rows: auto auto auto; }.about-intro { display: block; padding-bottom: 46px; }.about-intro .eyebrow { margin-bottom: 18px; }.about-intro h1 { margin-bottom: 30px; font-size: clamp(58px, 17.4vw, 100px); line-height: .74; }.about-lede { max-width: 300px; font-size: 16px; }.about-grid { grid-template-columns: 1fr; gap: 28px; padding: 28px 0 42px; }.minimal-footer { padding-top: 14px; }.campaign-header h1, .success-page h1 { margin-top: 9vh; }
   .film-page { gap: 34px; padding: 120px 18px 22px; }.film-intro { display: block; }.film-intro .eyebrow { margin-bottom: 17px; }.film-intro h1 { margin-bottom: 27px; font-size: clamp(54px, 15vw, 88px); }.film-intro > p:last-child { max-width: 330px; font-size: 14px; }.film-player { aspect-ratio: 4 / 3; }.film-waiting { grid-template-columns: 1fr; align-content: space-between; gap: 34px; padding: 18px; }.film-waiting h2 { font-size: clamp(31px, 9vw, 54px); }.film-footer { align-items: end; }
-  .account-page h1 { font-size: clamp(48px, 13vw, 78px); }.auth-switch button { min-width: 110px; }.auth-form, .account-panel { width: 100%; }.cart-toast { right: 12px; bottom: 12px; width: min(360px, calc(100vw - 24px)); }
+  .account-page h1 { font-size: clamp(48px, 13vw, 78px); }.auth-switch button { min-width: 110px; }.auth-form, .account-panel { width: 100%; }.cart-toast { top: 65px; left: 12px; width: min(285px, calc(100vw - 24px)); }
+  .checkout-page { padding: 16px 18px 28px; }.checkout-header .blur-lockup-image { width: 84px; }.checkout-intro { display: block; padding: 82px 0 48px; }.checkout-intro .eyebrow { margin-bottom: 17px; }.checkout-intro h1 { margin-bottom: 24px; font-size: clamp(52px, 15vw, 80px); }.checkout-layout { grid-template-columns: 1fr; gap: 40px; padding-top: 24px; }.checkout-summary { position: static; }.checkout-item h2 { font-size: 17px; }.checkout-policy-links { gap: 10px 14px; margin-top: 62px; }.policy-backdrop { padding: 12px; }.policy-sheet { max-height: calc(100svh - 24px); padding: 18px; }.policy-sheet h2 { font-size: clamp(38px, 12vw, 56px); }
   .admin-order { grid-template-columns: 1fr; gap: 16px; }.admin-heading { align-items: flex-start; flex-direction: column; gap: 10px; }.admin-heading .text-link { margin: 0; }
 }
 
@@ -292,7 +360,10 @@ html[lang="az"] .collection-statement h2 { letter-spacing: -.055em; line-height:
 html[lang="az"] .film-intro h1,
 html[lang="az"] .about-intro h1,
 html[lang="az"] .campaign-header h1,
-html[lang="az"] .success-page h1 { letter-spacing: -.055em; line-height: .84; }
+html[lang="az"] .success-page h1,
+html[lang="az"] .checkout-intro h1,
+html[lang="az"] .checkout-empty h1,
+html[lang="az"] .policy-sheet h2 { letter-spacing: -.055em; line-height: .84; }
 
 @media (max-width: 860px) {
   .film-player { width: 100%; }

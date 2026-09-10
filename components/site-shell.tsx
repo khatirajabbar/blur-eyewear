@@ -29,6 +29,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
   const headerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuOpen = menuOpenedFor === pathname;
+  const isCheckoutRoute = pathname === "/checkout";
   const closeMenu = () => setMenuOpenedFor(null);
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <header className="site-header" ref={headerRef}>
+      {!isCheckoutRoute && <header className="site-header" ref={headerRef}>
         <nav className="index-nav" aria-label="Main navigation">
           <BlurMark className="nav-mark" onClick={closeMenu} />
           <Link href="/cart" className="bag-link" onClick={closeMenu}>
@@ -82,7 +83,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="mobile-preferences"><StorefrontPreferences /></div>
         </nav>}
-      </header>
+      </header>}
       {children}
     </>
   );

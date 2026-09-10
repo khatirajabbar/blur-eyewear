@@ -1,75 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useAuth } from "@/components/auth/auth-provider";
 import { ProductVisual } from "@/components/product/product-visual";
 import { TextShuffle } from "@/components/ui/text-shuffle";
 import { products } from "@/data/products";
 import { useTranslation } from "@/hooks/use-translation";
 import { formatCurrency } from "@/lib/currency";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useBlurStore } from "@/store/blur-store";
 
 export function CartView() {
-  const router = useRouter();
   const { cart, cartCount, currency, setQuantity, removeFromCart } = useBlurStore();
-  const { configured, ready, user } = useAuth();
   const { t } = useTranslation();
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [checkoutError, setCheckoutError] = useState("");
   const cartProducts = cart.flatMap((item) => {
     const product = products.find((candidate) => candidate.id === item.productId);
     return product ? [{ product, quantity: item.quantity }] : [];
   });
   const subtotal = cartProducts.reduce((total, item) => total + item.product.priceUSD * item.quantity, 0);
-
-  const startCheckout = async () => {
-    setCheckoutError("");
-
-    if (!configured || !isSupabaseConfigured()) {
-      setCheckoutError(t("cart.checkoutUnavailable"));
-      return;
-    }
-
-    if (!ready || !user) {
-      const supabase = getSupabaseBrowserClient();
-      if (!supabase) {
-        setCheckoutError(t("cart.checkoutUnavailable"));
-        return;
-      }
-
-      const { data } = await supabase.auth.getUser();
-      if (!data.user) {
-        router.push("/account?next=/cart");
-        return;
-      }
-    }
-
-    setIsCheckingOut(true);
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ items: cart }),
-      });
-      const result: unknown = await response.json().catch(() => null);
-
-      if (!response.ok || !result || typeof result !== "object" || !("url" in result) || typeof result.url !== "string") {
-        const message = result && typeof result === "object" && "message" in result && typeof result.message === "string"
-          ? result.message
-          : t("cart.checkoutError");
-        throw new Error(message);
-      }
-
-      window.location.assign(result.url);
-    } catch (caught) {
-      setCheckoutError(caught instanceof Error ? caught.message : t("cart.checkoutError"));
-      setIsCheckingOut(false);
-    }
-  };
 
   return (
     <main className="cart-page page-shell">
@@ -101,10 +47,7 @@ export function CartView() {
             <p className="summary-price">{formatCurrency(subtotal, currency)}</p>
             <p>{t("cart.shipping")}</p>
             <p className="currency-note">{t("cart.currencyNote")}</p>
-            {checkoutError && <p className="form-error" role="alert">{checkoutError}</p>}
-            <button className="add-button" disabled={isCheckingOut} onClick={startCheckout}>
-              <TextShuffle text={isCheckingOut ? t("cart.checkoutLoading") : t("cart.checkout")} />
-            </button>
+            <Link href="/checkout" className="add-button"><TextShuffle text={t("cart.checkout")} /></Link>
           </aside>
         </div>
       )}

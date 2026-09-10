@@ -12,7 +12,7 @@ export function CartToast() {
 
   useEffect(() => {
     if (!toast) return;
-    const timeout = window.setTimeout(dismissToast, 4200);
+    const timeout = window.setTimeout(dismissToast, 5200);
     return () => window.clearTimeout(timeout);
   }, [dismissToast, toast]);
 
@@ -24,7 +24,7 @@ export function CartToast() {
   return (
     <div className="cart-toast" role="status" aria-live="polite">
       <p>{message}</p>
-      <Link href="/cart" onClick={dismissToast}>{t("toast.viewCart")} ↗</Link>
+      <Link href="/checkout" onClick={dismissToast}>{t("cart.checkout")} ↗</Link>
       <button type="button" onClick={dismissToast} aria-label={t("toast.close")}>×</button>
     </div>
   );
