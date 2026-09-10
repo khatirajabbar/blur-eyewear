@@ -11,6 +11,15 @@ import { products } from "@/data/products";
 import { useTranslation } from "@/hooks/use-translation";
 import { useBlurStore } from "@/store/blur-store";
 
+function CartIcon() {
+  return (
+    <svg className="cart-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+      <path d="M3.1 5.5h9.8l-.7 8H3.8l-.7-8Z" />
+      <path d="M5.6 5.5V4.1a2.4 2.4 0 0 1 4.8 0v1.4" />
+    </svg>
+  );
+}
+
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const { cartCount } = useBlurStore();
   const { user, ready } = useAuth();
@@ -47,7 +56,11 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <header className="site-header" ref={headerRef}>
         <nav className="index-nav" aria-label="Main navigation">
           <BlurMark className="nav-mark" onClick={closeMenu} />
-          <Link href="/cart" className="bag-link" onClick={closeMenu}><TextShuffle text={t("nav.cart")} /> <span>{String(cartCount).padStart(2, "0")}</span></Link>
+          <Link href="/cart" className="bag-link" onClick={closeMenu}>
+            <TextShuffle text={t("nav.cart")} />
+            <CartIcon />
+            <span className="cart-count">{String(cartCount).padStart(2, "0")}</span>
+          </Link>
           <div className="nav-links">
             <Link href="/shop" onClick={closeMenu}><TextShuffle text={t("nav.all")} /> <span>{String(products.length).padStart(2, "0")}</span></Link>
             <Link href="/film" onClick={closeMenu}><TextShuffle text={t("nav.film")} /></Link>
@@ -62,7 +75,11 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
           <Link href="/film" onClick={closeMenu}><TextShuffle text={t("nav.film")} /></Link>
           <Link href="/about" onClick={closeMenu}><TextShuffle text={t("nav.info")} /></Link>
           <Link href="/account" onClick={closeMenu}><TextShuffle text={ready && user ? t("nav.account") : t("nav.signIn")} /></Link>
-          <Link href="/cart" onClick={closeMenu}><TextShuffle text={t("nav.cart")} /> {String(cartCount).padStart(2, "0")}</Link>
+          <Link href="/cart" className="mobile-cart-link" onClick={closeMenu}>
+            <TextShuffle text={t("nav.cart")} />
+            <CartIcon />
+            <span className="mobile-cart-count">{String(cartCount).padStart(2, "0")}</span>
+          </Link>
           <div className="mobile-preferences"><StorefrontPreferences /></div>
         </nav>}
       </header>

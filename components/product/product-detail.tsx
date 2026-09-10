@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LookVisual } from "@/components/looks/look-visual";
 import { TextShuffle } from "@/components/ui/text-shuffle";
@@ -60,7 +59,6 @@ export function ProductDetail({ product }: { product: Product }) {
   return (
     <main className="product-page">
       <section className="product-stage" aria-label={t("product.imagery").replace("{name}", product.name)}>
-        <Link href="/shop" className="product-back">← <TextShuffle text={t("product.allFrames")} /></Link>
         <p className="product-view-count">{t("product.object")} {pad(selectedView + 1)} / 03</p>
 
         <div className="product-look-frame">

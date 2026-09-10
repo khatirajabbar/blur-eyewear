@@ -92,6 +92,10 @@ export function BlurStoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, [cart, currency, locale, hydrated]);
 
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
+
   const value = useMemo<BlurStore>(() => ({
     cart,
     currency,
