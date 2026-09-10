@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -92,7 +91,6 @@ export function AccountPage() {
         <div className="account-panel glass-panel">
           <p>{user.email}</p>
           <div className="account-actions">
-            <Link href="/admin" className="editorial-link">{t("account.admin")} ↗</Link>
             <button type="button" className="editorial-link" onClick={handleSignOut}>{t("account.signOut")}</button>
           </div>
         </div>
