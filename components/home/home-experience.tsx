@@ -48,9 +48,7 @@ export function HomeExperience() {
                 key={product.id}
                 className={index === activeIndex ? "is-active" : ""}
                 onClick={() => selectLook(index)}
-                onMouseEnter={() => selectLook(index)}
-                onFocus={() => selectLook(index)}
-                aria-current={index === activeIndex ? "true" : undefined}
+                aria-pressed={index === activeIndex}
               >
                 <span>{pad(index + 1)}</span>
                 <b><TextShuffle text={product.name} /></b>
