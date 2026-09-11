@@ -12,11 +12,39 @@ const pad = (value: number) => String(value).padStart(2, "0");
 
 export function HomeExperience() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [armedIndex, setArmedIndex] = useState<number | null>(null);
+  const [lockedIndex, setLockedIndex] = useState<number | null>(null);
   const { locale, t } = useTranslation();
   const activeProduct = products[activeIndex];
 
-  const selectLook = (index: number) => setActiveIndex(index);
-  const stepLook = (direction: number) => setActiveIndex((index) => (index + direction + products.length) % products.length);
+  const previewLook = (index: number) => {
+    if (lockedIndex === null) setActiveIndex(index);
+  };
+
+  const selectLook = (index: number) => {
+    if (lockedIndex === index) {
+      setLockedIndex(null);
+      setArmedIndex(null);
+      return;
+    }
+
+    setActiveIndex(index);
+
+    if (armedIndex === index) {
+      setLockedIndex(index);
+      setArmedIndex(null);
+      return;
+    }
+
+    setLockedIndex(null);
+    setArmedIndex(index);
+  };
+
+  const stepLook = (direction: number) => {
+    setLockedIndex(null);
+    setArmedIndex(null);
+    setActiveIndex((index) => (index + direction + products.length) % products.length);
+  };
 
   return (
     <main className="looks-home" id="collection">
@@ -48,7 +76,9 @@ export function HomeExperience() {
                 key={product.id}
                 className={index === activeIndex ? "is-active" : ""}
                 onClick={() => selectLook(index)}
-                aria-pressed={index === activeIndex}
+                onMouseEnter={() => previewLook(index)}
+                onFocus={() => previewLook(index)}
+                aria-current={index === activeIndex ? "true" : undefined}
               >
                 <span>{pad(index + 1)}</span>
                 <b><TextShuffle text={product.name} /></b>
